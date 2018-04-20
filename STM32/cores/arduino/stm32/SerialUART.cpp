@@ -176,7 +176,13 @@ int SerialUART::available() {
 }
 
 int SerialUART::availableForWrite() {
-    return txEnd != txStart;
+    int endOfBuffer = txEnd % BUFFER_SIZE;
+    int startOfBuffer = txStart % BUFFER_SIZE;
+    if (endOfBuffer==startOfBuffer)
+        return BUFFER_SIZE;
+    if (endOfBuffer>startOfBuffer)
+        return BUFFER_SIZE-endOfBuffer + startOfBuffer;
+    return BUFFER_SIZE-startOfBuffer + endOfBuffer;
 }
 
 int SerialUART::peek() {
